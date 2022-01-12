@@ -6,7 +6,6 @@ import {
   ActivityIndicator,
   Alert,
   Image,
-  Dimensions,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { InfoField } from "../components/InfoField";
@@ -20,7 +19,7 @@ const getIpfsUrl = (url: string, id: string): string => {
 export const DetailScreen = ({ route, navigation }) => {
   const { collection, id } = route.params;
   const [isLoading, setLoading] = useState(false);
-  const [attributes, setAttributes] = useState();
+  const [attributes, setAttributes] = useState<any[]>();
   const [image, setImage] = useState<string>();
 
   useEffect(() => {
@@ -104,13 +103,13 @@ export const DetailScreen = ({ route, navigation }) => {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {image && <Image source={{ uri: image }} style={styles.nftImage} />}
       <View style={styles.content}>
         {basicInfoView}
-        <ScrollView>{attributesInfoView}</ScrollView>
+        {attributesInfoView}
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
