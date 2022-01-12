@@ -11,13 +11,10 @@ import {
   Platform,
   ActivityIndicator,
 } from "react-native";
-import { cvToValue } from "@stacks/transactions";
 import { ScrollView } from "react-native-gesture-handler";
 
 export const LookUpScreen = ({ navigation }) => {
-  const [input, setInput] = useState(
-    "SP36DHK0QACYS0FNVZ0Q5HMA10CD29XZNE029QX1F"
-  ); // Maybe use Formik instead
+  const [input, setInput] = useState(); // Maybe use Formik instead
   const [result, setResult] = useState();
   const [loading, setLoading] = useState(false);
 
