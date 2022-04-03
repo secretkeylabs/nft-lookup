@@ -35,8 +35,8 @@ export const DetailScreen = ({ route, navigation }) => {
     );
 
     (async () => {
-      setLoading(true);
       try {
+        setLoading(true);
         const {
           data: { nft_token_attributes, token_metadata },
         } = await attributesRequest.then((response) => response.json());
