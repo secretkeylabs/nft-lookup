@@ -10,10 +10,14 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import { InfoField } from "../components/InfoField";
 
-const getIpfsUrl = (url: string, id: string): string => {
-  const ipfsUrl = url.split("//");
-  const address = ipfsUrl[1].split("/");
-  return `https://ipfs.io/ipfs/${address[0]}/${id}.png`;
+const getIpfsUrl = (uri: string, protocol: string): string | null => {
+  const publicIpfs = "https://ipfs.io/ipfs";
+  if (protocol === "http") return uri;
+  if (protocol === "ipfs") {
+    const url = uri.split("//");
+    return `${publicIpfs}/${url[1]}`;
+  }
+  return null;
 };
 
 export const DetailScreen = ({ route, navigation }) => {
@@ -26,19 +30,26 @@ export const DetailScreen = ({ route, navigation }) => {
     const [address, name] = collection.split("::")[0].split(".");
     const abortController = new AbortController();
     const attributesRequest = fetch(
-      `https://stxnft.com/api/nft?address=${address}&name=${name}&id=${id}`,
+      `https://stxnft.com/api/v1/collections/${address}.${name}/${id}`,
       { signal: abortController.signal }
     );
+
     (async () => {
       setLoading(true);
-
       try {
-        const { attributes, image: imageURL } = await attributesRequest.then(
-          (response) => response.json()
-        );
-        setAttributes(attributes);
-        if (imageURL) setImage(getIpfsUrl(imageURL, id));
-        setLoading(false);
+        const {
+          data: { nft_token_attributes, token_metadata },
+        } = await attributesRequest.then((response) => response.json());
+        setAttributes(nft_token_attributes);
+        if (
+          token_metadata &&
+          token_metadata.image_url &&
+          token_metadata.image_protocol
+        ) {
+          setImage(
+            getIpfsUrl(token_metadata.image_url, token_metadata.image_protocol)
+          );
+        }
       } catch (err: unknown) {
         if (err instanceof Error) {
           if (err.name !== "AbortError") {
@@ -51,9 +62,10 @@ export const DetailScreen = ({ route, navigation }) => {
                 style: "cancel",
               },
             ]);
-            setLoading(false);
           }
         }
+      } finally {
+        setLoading(false);
       }
     })();
     return () => {
@@ -87,10 +99,10 @@ export const DetailScreen = ({ route, navigation }) => {
         ) : (
           <>
             {attributes &&
-              attributes?.map((attribute) => {
+              attributes?.map((attribute, index) => {
                 return (
                   <InfoField
-                    key={attribute.trait_type}
+                    key={`${index}${attribute.trait_type}`}
                     title={attribute.trait_type}
                     value={attribute.value}
                   />

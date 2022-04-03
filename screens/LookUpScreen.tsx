@@ -14,7 +14,7 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 
 export const LookUpScreen = ({ navigation }) => {
-  const [input, setInput] = useState(); // Maybe use Formik instead
+  const [input, setInput] = useState("SPJW1XE278YMCEYMXB8ZFGJMH8ZVAAEDP2S2PJYG"); // Maybe use Formik instead
   const [result, setResult] = useState();
   const [loading, setLoading] = useState(false);
 
