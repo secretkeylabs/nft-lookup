@@ -14,13 +14,12 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 
 export const LookUpScreen = ({ navigation }) => {
-  const [input, setInput] = useState("SPJW1XE278YMCEYMXB8ZFGJMH8ZVAAEDP2S2PJYG"); // Maybe use Formik instead
-  const [result, setResult] = useState();
-  const [loading, setLoading] = useState(false);
+  const [input, setInput] = useState(
+    "SPJW1XE278YMCEYMXB8ZFGJMH8ZVAAEDP2S2PJYG"
+  ); // Maybe use Formik instead
+  const [result, setResult] = useState<any>();
 
   const handleLookUp = async () => {
-    setLoading(true);
-
     try {
       const responseJson = await fetch(
         `https://stacks-node-api.mainnet.stacks.co/extended/v1/address/${input}/nft_events`
@@ -32,37 +31,34 @@ export const LookUpScreen = ({ navigation }) => {
       }
     } catch (err: unknown) {
       if (err instanceof Error) alert(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
   const resultView = (
     <>
-      {!loading && result && (
+      {result && (
         <>
           <Text style={styles.text}>Results</Text>
           <View style={styles.results}>
-            {result &&
-              result.map((nft) => {
-                return (
-                  <TouchableOpacity
-                    key={nft.value.hex}
-                    onPress={() =>
-                      navigation.navigate("Detail", {
-                        collection: nft.asset_identifier,
-                        id: nft.value.repr.replace("u", ""),
-                      })
-                    }
-                  >
-                    <View style={{ display: "flex", flexDirection: "row" }}>
-                      <Text style={{ color: "white", marginVertical: 10 }}>
-                        {nft.asset_identifier}
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                );
-              })}
+            {result.map((nft) => {
+              return (
+                <TouchableOpacity
+                  key={nft.value.hex}
+                  onPress={() =>
+                    navigation.navigate("Detail", {
+                      collection: nft.asset_identifier,
+                      id: nft.value.repr.replace("u", ""),
+                    })
+                  }
+                >
+                  <View style={{ display: "flex", flexDirection: "row" }}>
+                    <Text style={{ color: "white", marginVertical: 10 }}>
+                      {nft.asset_identifier}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </>
       )}
@@ -87,13 +83,9 @@ export const LookUpScreen = ({ navigation }) => {
               }}
             />
             <TouchableOpacity style={styles.button} onPress={handleLookUp}>
-              {loading ? (
-                <ActivityIndicator />
-              ) : (
-                <Text style={{ textAlign: "center", color: "white" }}>
-                  Look up
-                </Text>
-              )}
+              <Text style={{ textAlign: "center", color: "white" }}>
+                Look up
+              </Text>
             </TouchableOpacity>
             {resultView}
           </ScrollView>

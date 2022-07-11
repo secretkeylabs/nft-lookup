@@ -22,7 +22,6 @@ const getIpfsUrl = (uri: string, protocol: string): string | null => {
 
 export const DetailScreen = ({ route, navigation }) => {
   const { collection, id } = route.params;
-  const [isLoading, setLoading] = useState(false);
   const [attributes, setAttributes] = useState<any[]>();
   const [image, setImage] = useState<string>();
 
@@ -36,7 +35,6 @@ export const DetailScreen = ({ route, navigation }) => {
 
     (async () => {
       try {
-        setLoading(true);
         const {
           data: { nft_token_attributes, token_metadata },
         } = await attributesRequest.then((response) => response.json());
@@ -64,8 +62,6 @@ export const DetailScreen = ({ route, navigation }) => {
             ]);
           }
         }
-      } finally {
-        setLoading(false);
       }
     })();
     return () => {
@@ -94,9 +90,7 @@ export const DetailScreen = ({ route, navigation }) => {
       <InfoField title={"ID value"} value={id} />
       <View style={{ marginTop: 10 }}>
         <Text style={styles.contentTitle}>Attributes</Text>
-        {isLoading ? (
-          <ActivityIndicator style={{ marginTop: 25 }} />
-        ) : (
+        {
           <>
             {attributes &&
               attributes?.map((attribute, index) => {
@@ -109,7 +103,7 @@ export const DetailScreen = ({ route, navigation }) => {
                 );
               })}
           </>
-        )}
+        }
       </View>
     </>
   );
